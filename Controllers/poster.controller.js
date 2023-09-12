@@ -28,6 +28,8 @@ class PosterController {
 	 * @param {Object} res Express Response Object
 	 */
 	list = async (req, res) => {
+		const { genre_slug } = req.params
+		console.log(genre_slug);
 		// Indhenter parametre fra request objekt
 		const qp = QueryParamsHandle(req, 'id, name, image, slug, price')
 
@@ -40,7 +42,7 @@ class PosterController {
 				model: GenreModel,
 				as: 'genres',
 				attributes: ['id', 'title'],
-				where: (req.params.genre) ? { slug: req.params.genre } : null
+				where: (genre_slug) ? { slug: genre_slug } : null
 			}
 		})
 		// Udskriver resultat i json format
@@ -54,12 +56,12 @@ class PosterController {
 	 */
 	details = async (req, res) => {
 		// Destructure assignment af id. 
-		const { id } = req.params || 0
+		const { slug } = req.params || 0
 		// Eksekverer sequelize metode med attributter og where clause
 		const result = await PosterModel.findOne({
 			attributes: ['id', 'name', 'slug', 'description', 'image', 'width', 
 						'height', 'price', 'stock', 'createdAt', 'updatedAt'],
-			where: { id: id },
+			where: { slug: slug },
 			include: {
 				model: GenreModel,
 				as: 'genres',
